@@ -1,0 +1,7 @@
+body {
+    height: 97vh;
+    padding: 0;
+    display: grid;
+    align-content: center;
+    justify-content: center;
+}
