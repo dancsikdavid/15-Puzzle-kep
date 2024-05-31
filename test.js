@@ -1,5 +1,99 @@
 var p=setup.puzzle_fifteen,freeslot=[],size=[],m=[],o,f=document.getElementById("fifteen");
-ceation_slots();
+let startButton;
+
+let startTime, interval;
+const timerDisplay = document.createElement("div");
+
+function startTimer() {
+    startTime = new Date().getTime();
+    interval = setInterval(updateTimer, 1000);
+}
+
+function updateTimer() {
+    const now = new Date().getTime();
+    const elapsedTime = now - startTime;
+    const minutes = Math.floor(elapsedTime / 60000);
+    const seconds = Math.floor((elapsedTime % 60000) / 1000);
+    timerDisplay.innerHTML = `${minutes}m ${seconds}s`;
+}
+
+function stopTimer() {
+    clearInterval(interval);
+}
+
+function createTimerDisplay() {
+    timerDisplay.style.position = 'absolute';
+    timerDisplay.style.top = '10px';
+    timerDisplay.style.right = '10px';
+    timerDisplay.style.backgroundColor = '#28a745';
+    timerDisplay.style.color = '#fff';
+    timerDisplay.style.padding = '10px 20px';
+    timerDisplay.style.borderRadius = '8px';
+    timerDisplay.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.1)';
+    timerDisplay.style.fontFamily = 'Arial, sans-serif';
+    timerDisplay.style.fontSize = '70px';
+    timerDisplay.style.zIndex = '1000';
+    document.body.appendChild(timerDisplay);
+}
+
+function createStartButton() {
+    startButton = document.createElement("button");
+    startButton.innerHTML = "Start";
+    startButton.style.position = 'absolute';
+    startButton.style.top = '50%';
+    startButton.style.left = '50%';
+    startButton.style.transform = 'translate(-50%, -50%)';
+    startButton.style.padding = '10px 20px';
+    startButton.style.fontSize = '16px';
+    startButton.style.backgroundColor = '#28a745';
+    startButton.style.color = '#fff';
+    startButton.style.border = 'none';
+    startButton.style.borderRadius = '5px';
+    startButton.style.cursor = 'pointer';
+    startButton.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.1)';
+    startButton.style.zIndex = '1000';
+    document.body.appendChild(startButton);
+
+    startButton.addEventListener("click", function() {
+        ceation_slots();
+        startTimer();
+        startButton.style.display = 'none';
+        createClickDisplay();
+    });
+}
+
+createTimerDisplay();
+createStartButton();
+
+let clickCount = 0;
+const clickDisplay = document.createElement("div");
+
+
+function createClickDisplay() {
+    clickDisplay.style.position = 'absolute';
+    clickDisplay.style.top = '10px';
+    clickDisplay.style.left = '10px';
+    clickDisplay.style.backgroundColor = '#28a745';
+    clickDisplay.style.color = '#fff';
+    clickDisplay.style.padding = '10px 20px';
+    clickDisplay.style.borderRadius = '8px';
+    clickDisplay.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.1)';
+    clickDisplay.style.fontFamily = 'Arial, sans-serif';
+    clickDisplay.style.fontSize = '70px';
+    clickDisplay.style.zIndex = '1000';
+    clickDisplay.innerHTML = `Clicks: ${clickCount}`;
+    document.body.appendChild(clickDisplay);
+}
+
+function incrementClickCount() {
+    clickCount++;
+    clickDisplay.innerHTML = `Clicks: ${clickCount}`;
+}
+
+incrementClickCount();
+
+e.setAttribute("onclick", `move_slot(${o}); incrementClickCount();`);
+
 function ceation_slots(){
     size=[p.size[0]/(p.grid[0]+1),p.size[1]/(p.grid[1]+1)]
     var c=(p.emptySlot)?p.emptySlot:(p.grid[1]+1)*(p.grid[0]+1);
@@ -24,6 +118,7 @@ function ceation_slots(){
         }
     }stir_slots();
 }
+
 function stir_slots(){
     for(var y=0;y<p.diff;y++){
         var a=[];
@@ -48,6 +143,7 @@ function stir_slots(){
         }
     }
 }
+
 function move_slot(s) {
     var z=0,e,a=[],k,j;
     function move(y,x,h,w){
@@ -74,19 +170,22 @@ function move_slot(s) {
         }if(!s){break;}
     }check_slots();
 }
+
 function check_slots(){
     var check=1;
     for(var y=0;y<=p.grid[1];y++){
         for(var x=0;x<=p.grid[0];x++){
             if(m[y][x]==0||check==m[y][x]){check++}else{break;}
         }
-    }if(check==o){setTimeout(()=>{ alert('win') },((p.time)?p.time*1000:0));}
+    }if(check==o){setTimeout(()=>{ alert('win'); stopTimer(); },((p.time)?p.time*1000:0));}
 }
+
 function fifteen_resize(){
     var rect=f.parentNode.getBoundingClientRect();
     if((p.size[0]/p.size[1])<(rect.width/rect.height)){f.style.transform='scale('+(rect.height/p.size[1])+')'}
     else{f.style.transform='scale('+(rect.width/p.size[0])+')'}
 }
+
 if(p.keyBoard){document.addEventListener("keydown",function(e){
     e=e.keyCode;
          if(e==37){move_slot(m[freeslot[0]][freeslot[1]+1]);}
@@ -94,6 +193,7 @@ if(p.keyBoard){document.addEventListener("keydown",function(e){
     else if(e==38){move_slot(m[freeslot[0]+1][freeslot[1]]);}
     else if(e==40){move_slot(m[freeslot[0]-1][freeslot[1]]);}
 })}
+
 let gamepad,gamepadPress;
 if(p.gamePad){window.addEventListener('gamepadconnected',function(e){
         const update=()=>{
